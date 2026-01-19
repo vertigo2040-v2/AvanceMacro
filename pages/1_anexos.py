@@ -36,6 +36,7 @@ donde:
 - $A(t)$: nivel de tecnología,
 - $P(t)$: población (trabajo),
 - $T$: cantidad fija de tierra.
+
 Dado que **la tierra es un recurso fijo y no crece con el tiempo**, Kremer **normaliza $T = 1$** sin pérdida de generalidad. Esto simplifica la función a:
 
 $$
