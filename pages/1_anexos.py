@@ -134,25 +134,9 @@ $$
 Esto se observa en los datos históricos desde 1,000,000 A.C. hasta ~1950.
 """)
 
-st.header("6. Conexión con David Romer (*Macroeconomía Avanzada*)")
 
-st.markdown(r"""
-Como señala **David Romer (Capítulo 3, 5ª ed.)**, los modelos de crecimiento endógeno con externalidades de conocimiento comparten la idea central de que **las ideas son no rivales**. 
 
-Sin embargo, Kremer hace una contribución única:
-
-- En lugar de enfocarse en capital humano o I+D formal (como en los modelos de Paul Romer, 1990), 
-  **usa la población como proxy de capacidad innovadora**.
-- Aplica el modelo a **un millón de años de historia**, no solo al período moderno.
-- Muestra que el crecimiento puede ser endógeno incluso en sociedades sin mercados formales.
-
-> *"Kremer’s model is a striking example of how simple assumptions about the nonrivalry of ideas can generate powerful predictions about long-run development."*  
-> — David Romer, *Advanced Macroeconomics*, p. 132 (5ª ed., 2019)
-
-Además, el modelo ilustra el concepto de **externalidades positivas de la población**: cada persona adicional genera conocimiento que beneficia a todos, sin recibir compensación directa.
-""")
-
-st.header("7. Extensión: transición demográfica")
+st.header("6. Extensión: transición demográfica")
 
 st.markdown(r"""
 El modelo básico no explica la desaceleración post-1950. Kremer lo generaliza asumiendo que la tasa de crecimiento poblacional es una función del ingreso per cápita $y$:
