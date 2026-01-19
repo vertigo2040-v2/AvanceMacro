@@ -47,6 +47,7 @@ Este ciclo genera un **crecimiento super-exponencial**: no solo la población cr
 Kremer muestra que:
 - La tasa de crecimiento poblacional ha sido aproximadamente **proporcional al nivel de población** (ver Figura I del paper).
 - Entre sociedades aisladas (ej. Tasmania vs. Viejo Mundo), **las más pobladas desarrollaron más tecnología**.
+
 Esta simulación te permite explorar esos mecanismos en tiempo real.
 """)
 
@@ -96,7 +97,8 @@ with col1:
         value=st.session_state["g_slider"],
         step=0.001,
         key="g_slider"
-    )    alpha = st.slider(
+    )
+    alpha = st.slider(
         "Parámetro α (elasticidad tierra)",
         min_value=0.5,
         max_value=0.9,
@@ -145,7 +147,8 @@ for i in range(1, len(years_sim)):
 if include_dem_trans and not explosion_detected:
     for i, y in enumerate(years_sim):
         if y >= 1950:
-            years_since_1950 = y - 1950            reduction_factor = max(0.2, 1 - 0.015 * years_since_1950)
+            years_since_1950 = y - 1950
+            reduction_factor = max(0.2, 1 - 0.015 * years_since_1950)
             if i > 0:
                 current_growth = np.log(P_global[i] / P_global[i-1])
                 adjusted_growth = current_growth * reduction_factor
@@ -194,6 +197,7 @@ ax1_zoom.set_title("Zoom: Evolución de la población (últimos 12,000 años)")
 
 ax1_zoom.set_xticks([-10000, -5000, -1000, 0, 500, 1000, 1500, 1900, 2000])
 ax1_zoom.set_xticklabels(["-10K", "-5K", "-1K", "0", "500", "1K", "1.5K", "1900", "2000"], rotation=45)
+
 ax1_zoom.legend()
 ax1_zoom.grid(True, which="both", ls="--", lw=0.5)
 st.pyplot(fig1_zoom)
@@ -243,7 +247,8 @@ with st.expander("ℹ️ ¿Qué muestra esta simulación?"):
     - Mayor crecimiento poblacional.
     - Mayor densidad tecnológica (aquí proxieda por la población misma).
 
-    **En esta simulación:**      - Ambas regiones usan los mismos parámetros (`g`, `α`).  
+    **En esta simulación:**  
+    - Ambas regiones usan los mismos parámetros (`g`, `α`).  
     - Solo difieren en su **población inicial**.  
     - No hay intercambio de ideas (tecnología no se difunde).  
     - Observamos cómo pequeñas diferencias iniciales se amplifican con el tiempo.
@@ -292,7 +297,8 @@ def simulate_population(P0, years, g, alpha, dt=10):
         P[i] = P[i-1] + dPdt * dt
         if np.isinf(P[i]) or np.isnan(P[i]) or P[i] > 1000:
             P[i] = 1000
-            break        if P[i] < 1e-12:
+            break
+        if P[i] < 1e-12:
             P[i] = 1e-12
     return P
 
@@ -341,6 +347,7 @@ Esto no es un colapso malthusiano (falta de recursos), sino una **transición de
 - Mayor costo de oportunidad del tiempo de las mujeres (educación, empleo).
 - Menor mortalidad infantil → no se necesitan tantos hijos para asegurar supervivencia.
 - Preferencia por invertir en la **calidad** (educación, salud) de pocos hijos, no en la **cantidad**.
+
 Como dice Kremer (1993, p. 698):
 > *“The generalized model predicts that population growth rates will eventually decline—not due to overpopulation and environmental collapse, but to increased income and declining fertility.”*
 
@@ -391,6 +398,7 @@ gr_without = np.diff(np.log(P_without_trans)) * 100
 mask_hist = (df_hist["Year"] >= 1900) & (df_hist["Year"] <= 2000)
 df_hist_recent = df_hist[mask_hist].copy()
 gr_hist = np.diff(np.log(df_hist_recent["Pop"])) / np.diff(df_hist_recent["Year"]) * 100
+
 fig_recent, ax_recent = plt.subplots(figsize=(8, 4))
 ax_recent.plot(
     df_hist_recent["Year"].iloc[:-1], gr_hist,
