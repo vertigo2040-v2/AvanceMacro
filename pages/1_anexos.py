@@ -28,15 +28,22 @@ Siguiendo a Malthus y Kremer, la producción de alimentos determina el tamaño m
 La función de producción es:
 
 $$
-Y(t) = [A(t) P(t)]^{1 - \alpha}, \quad 0 < \alpha < 1
+Y(t) = [A(t) P(t)]^{1 - \alpha} T^{\alpha}, \quad 0 < \alpha < 1
 $$
 
 donde:
 - $Y(t)$: producción total de alimentos,
-- $A(t)$: nivel de tecnología (eficiencia del trabajo),
+- $A(t)$: nivel de tecnología,
 - $P(t)$: población (trabajo),
-- $\alpha$: elasticidad de la tierra (normalizada a 1 unidad).
+- $T$: cantidad fija de tierra.
+Dado que **la tierra es un recurso fijo y no crece con el tiempo**, Kremer **normaliza $T = 1$** sin pérdida de generalidad. Esto simplifica la función a:
 
+$$
+Y(t) = [A(t) P(t)]^{1 - \alpha}
+\tag{1}
+$$
+> 🔹 **Nota**: La normalización $T = 1$ es estándar en modelos de crecimiento con factores fijos. No afecta las dinámicas relativas, solo escala los niveles absolutos.  
+                
 En equilibrio malthusiano, el ingreso per cápita es constante en $\bar{y}$, por lo que:
 
 $$
