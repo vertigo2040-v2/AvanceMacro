@@ -66,21 +66,62 @@ with st.expander("ℹ️ ¿Cómo usar esta simulación?"):
     **Nota:** El modelo es *super-exponencial*: cambios pequeños al inicio tienen enormes efectos a largo plazo.
     """)
 
+# === Botón de parámetros calibrados ===
+if st.button("🎯 Usar parámetros calibrados (Kremer, 1993)"):
+    # Estos valores reproducen aproximadamente la Figura I y Tabla II
+    st.session_state.g = 0.0015
+    st.session_state.alpha = 0.7
+    st.session_state.pop0_global = 0.004  # 4 millones en -10,000
+    st.session_state.P0_old_millions = 50.0
+    st.session_state.P0_tas_millions = 0.004
+
+# Inicializar estado si no existe
+if 'g' not in st.session_state:
+    st.session_state.g = 0.008
+if 'alpha' not in st.session_state:
+    st.session_state.alpha = 0.7
+if 'pop0_global' not in st.session_state:
+    st.session_state.pop0_global = 0.004
+if 'P0_old_millions' not in st.session_state:
+    st.session_state.P0_old_millions = 50.0
+if 'P0_tas_millions' not in st.session_state:
+    st.session_state.P0_tas_millions = 0.004
+
 # Parámetros interactivos
 col1, col2 = st.columns(2)
 with col1:
     g = st.slider(
-    "Productividad de investigación (g)",
-    min_value=0.001,
-    max_value=0.02,
-    value=0.008,
-    step=0.001,
-    help="Qué tan eficaz es cada persona generando innovación. Valores típicos: 0.005–0.01. Si es muy bajo, el crecimiento es lento; si es muy alto, explota antes de 1950."
-)
-    alpha = st.slider("Parámetro α (elasticidad tierra)", 0.5, 0.9, 0.7, step=0.05)
+        "Productividad de investigación (g)",
+        min_value=0.001,
+        max_value=0.02,
+        value=st.session_state.g,
+        step=0.001,
+        key="g_slider"
+    )
+    alpha = st.slider(
+        "Parámetro α (elasticidad tierra)",
+        min_value=0.5,
+        max_value=0.9,
+        value=st.session_state.alpha,
+        step=0.05,
+        key="alpha_slider"
+    )
 with col2:
     include_dem_trans = st.checkbox("Incluir transición demográfica (post-1950)", True)
-    pop0_global = st.number_input("Población inicial global (billones) en -10,000", 0.0001, 0.1, 0.004, step=0.001, format="%.4f")
+    pop0_global = st.number_input(
+        "Población inicial global (billones) en -10,000",
+        min_value=0.0001,
+        max_value=0.1,
+        value=st.session_state.pop0_global,
+        step=0.001,
+        format="%.4f",
+        key="pop0_global_input"
+    )
+
+# Actualizar el estado cuando el usuario cambia los controles
+st.session_state.g = g
+st.session_state.alpha = alpha
+st.session_state.pop0_global = pop0_global
 
 # Validación visual
 if pop0_global < 0.001:
