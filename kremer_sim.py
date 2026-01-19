@@ -47,9 +47,9 @@ Este ciclo genera un **crecimiento super-exponencial**: no solo la población cr
 Kremer muestra que:
 - La tasa de crecimiento poblacional ha sido aproximadamente **proporcional al nivel de población** (ver Figura I del paper).
 - Entre sociedades aisladas (ej. Tasmania vs. Viejo Mundo), **las más pobladas desarrollaron más tecnología**.
-
 Esta simulación te permite explorar esos mecanismos en tiempo real.
 """)
+
 # === Instrucciones interactivas ===
 with st.expander("ℹ️ ¿Cómo usar esta simulación?"):
     st.markdown("""
@@ -68,41 +68,39 @@ with st.expander("ℹ️ ¿Cómo usar esta simulación?"):
 
 # === Botón de parámetros calibrados ===
 if st.button("🎯 Usar parámetros calibrados (Kremer, 1993)"):
-    # Estos valores reproducen aproximadamente la Figura I y Tabla II
-    st.session_state.g = 0.0015
-    st.session_state.alpha = 0.7
-    st.session_state.pop0_global = 0.004  # 4 millones en -10,000
-    st.session_state.P0_old_millions = 50.0
-    st.session_state.P0_tas_millions = 0.004
+    st.session_state["g_slider"] = 0.0015
+    st.session_state["alpha_slider"] = 0.7
+    st.session_state["pop0_global_input"] = 0.004
+    st.session_state["P0_old_input"] = 50.0
+    st.session_state["P0_tas_input"] = 0.004
 
-# Inicializar estado si no existe
-if 'g' not in st.session_state:
-    st.session_state.g = 0.008
-if 'alpha' not in st.session_state:
-    st.session_state.alpha = 0.7
-if 'pop0_global' not in st.session_state:
-    st.session_state.pop0_global = 0.004
-if 'P0_old_millions' not in st.session_state:
-    st.session_state.P0_old_millions = 50.0
-if 'P0_tas_millions' not in st.session_state:
-    st.session_state.P0_tas_millions = 0.004
+# Inicializar estado con las CLAVES DE LOS WIDGETS
+if "g_slider" not in st.session_state:
+    st.session_state["g_slider"] = 0.008
+if "alpha_slider" not in st.session_state:
+    st.session_state["alpha_slider"] = 0.7
+if "pop0_global_input" not in st.session_state:
+    st.session_state["pop0_global_input"] = 0.004
+if "P0_old_input" not in st.session_state:
+    st.session_state["P0_old_input"] = 50.0
+if "P0_tas_input" not in st.session_state:
+    st.session_state["P0_tas_input"] = 0.004
 
-# Parámetros interactivos
+# Parámetros interactivos (usan las mismas claves)
 col1, col2 = st.columns(2)
 with col1:
     g = st.slider(
         "Productividad de investigación (g)",
         min_value=0.001,
         max_value=0.02,
-        value=st.session_state.g,
+        value=st.session_state["g_slider"],
         step=0.001,
         key="g_slider"
-    )
-    alpha = st.slider(
+    )    alpha = st.slider(
         "Parámetro α (elasticidad tierra)",
         min_value=0.5,
         max_value=0.9,
-        value=st.session_state.alpha,
+        value=st.session_state["alpha_slider"],
         step=0.05,
         key="alpha_slider"
     )
@@ -112,16 +110,11 @@ with col2:
         "Población inicial global (billones) en -10,000",
         min_value=0.0001,
         max_value=0.1,
-        value=st.session_state.pop0_global,
+        value=st.session_state["pop0_global_input"],
         step=0.001,
         format="%.4f",
         key="pop0_global_input"
     )
-
-# Actualizar el estado cuando el usuario cambia los controles
-st.session_state.g = g
-st.session_state.alpha = alpha
-st.session_state.pop0_global = pop0_global
 
 # Validación visual
 if pop0_global < 0.001:
@@ -138,16 +131,13 @@ for i in range(1, len(years_sim)):
     dPdt = (g / (1 - alpha)) * P_global[i-1]**2
     P_global[i] = P_global[i-1] + dPdt * dt
     
-    # Verificar si se volvió infinito o NaN
     if np.isinf(P_global[i]) or np.isnan(P_global[i]):
         st.warning(f"⚠️ Explosión detectada en el año {int(years_sim[i])}. La población creció demasiado rápido.")
         explosion_detected = True
-        # Rellenar el resto con el último valor válido
         for j in range(i, len(years_sim)):
             P_global[j] = P_global[i-1]
         break
 
-    # Evitar valores negativos o muy pequeños
     if P_global[i] <= 0:
         P_global[i] = 1e-12
 
@@ -155,12 +145,11 @@ for i in range(1, len(years_sim)):
 if include_dem_trans and not explosion_detected:
     for i, y in enumerate(years_sim):
         if y >= 1950:
-            years_since_1950 = y - 1950
-            reduction_factor = max(0.2, 1 - 0.015 * years_since_1950)
+            years_since_1950 = y - 1950            reduction_factor = max(0.2, 1 - 0.015 * years_since_1950)
             if i > 0:
                 current_growth = np.log(P_global[i] / P_global[i-1])
                 adjusted_growth = current_growth * reduction_factor
-                P_global[i] = P_global[i-1] * np.exp(adjusted_growth) 
+                P_global[i] = P_global[i-1] * np.exp(adjusted_growth)
 
 # === Gráfico 1: Visión general (todo el rango) ===
 fig1_general, ax1_general = plt.subplots(figsize=(8, 4))
@@ -171,7 +160,6 @@ ax1_general.set_xlabel("Año (negativo = A.C., positivo = D.C.)")
 ax1_general.set_ylabel("Población (billones)")
 ax1_general.set_title("Evolución global de la población (visión general)")
 
-# Formato del eje X para visión general
 ax1_general.set_xticks([-1000000, -500000, -100000, -10000, 0, 1000, 2000])
 ax1_general.set_xticklabels(["-1M", "-500K", "-100K", "-10K", "0", "1K", "2K"], rotation=45)
 
@@ -182,11 +170,9 @@ st.pyplot(fig1_general)
 # === Gráfico 2: Zoom en los últimos 12,000 años ===
 fig1_zoom, ax1_zoom = plt.subplots(figsize=(8, 4))
 
-# Filtrar datos para el zoom
 mask_zoom = (df_hist["Year"] >= -10000) & (df_hist["Year"] <= 2000)
 df_hist_zoom = df_hist[mask_zoom].copy()
 
-# Filtrar simulación para el zoom
 mask_sim_zoom = (years_sim >= -10000) & (years_sim <= 2000)
 years_sim_zoom = years_sim[mask_sim_zoom]
 P_global_zoom = P_global[mask_sim_zoom]
@@ -194,7 +180,6 @@ P_global_zoom = P_global[mask_sim_zoom]
 ax1_zoom.plot(df_hist_zoom["Year"], df_hist_zoom["Pop"], 'o-', label="Datos históricos (Kremer)", color="black", markersize=4)
 ax1_zoom.plot(years_sim_zoom, P_global_zoom, '-', label="Simulación global", color="red")
 
-# Opción: usar escala logarítmica o lineal según preferencia
 if st.checkbox("Usar escala logarítmica (zoom)", True):
     ax1_zoom.set_yscale("log")
     ax1_zoom.text(0.05, 0.95, 
@@ -207,10 +192,8 @@ ax1_zoom.set_xlabel("Año (negativo = A.C., positivo = D.C.)")
 ax1_zoom.set_ylabel("Población (billones)")
 ax1_zoom.set_title("Zoom: Evolución de la población (últimos 12,000 años)")
 
-# Formato del eje X para zoom
 ax1_zoom.set_xticks([-10000, -5000, -1000, 0, 500, 1000, 1500, 1900, 2000])
 ax1_zoom.set_xticklabels(["-10K", "-5K", "-1K", "0", "500", "1K", "1.5K", "1900", "2000"], rotation=45)
-
 ax1_zoom.legend()
 ax1_zoom.grid(True, which="both", ls="--", lw=0.5)
 st.pyplot(fig1_zoom)
@@ -233,7 +216,6 @@ P_plot = P_mid[valid]
 gr_plot = gr_sim_full[valid]
 
 fig2, ax2 = plt.subplots(figsize=(6, 4))
-# Datos históricos
 hist_gr = np.diff(np.log(df_hist["Pop"])) / np.diff(df_hist["Year"])
 hist_valid = (df_hist["Pop"].iloc[:-1] > 0) & np.isfinite(hist_gr)
 ax2.scatter(
@@ -261,8 +243,7 @@ with st.expander("ℹ️ ¿Qué muestra esta simulación?"):
     - Mayor crecimiento poblacional.
     - Mayor densidad tecnológica (aquí proxieda por la población misma).
 
-    **En esta simulación:**  
-    - Ambas regiones usan los mismos parámetros (`g`, `α`).  
+    **En esta simulación:**      - Ambas regiones usan los mismos parámetros (`g`, `α`).  
     - Solo difieren en su **población inicial**.  
     - No hay intercambio de ideas (tecnología no se difunde).  
     - Observamos cómo pequeñas diferencias iniciales se amplifican con el tiempo.
@@ -280,7 +261,7 @@ with col3:
         "Población inicial: Viejo Mundo (millones)",
         min_value=1.0,
         max_value=1000.0,
-        value=st.session_state.P0_old_millions,
+        value=st.session_state["P0_old_input"],
         step=10.0,
         key="P0_old_input"
     )
@@ -289,15 +270,11 @@ with col4:
         "Población inicial: Tasmania (millones)",
         min_value=0.001,
         max_value=10.0,
-        value=st.session_state.P0_tas_millions,
+        value=st.session_state["P0_tas_input"],
         step=0.001,
         format="%.3f",
         key="P0_tas_input"
     )
-
-# Actualizar estado
-st.session_state.P0_old_millions = P0_old_millions
-st.session_state.P0_tas_millions = P0_tas_millions
 
 # Convertir a billones
 P0_old = P0_old_millions / 1000
@@ -308,16 +285,14 @@ years_iso = np.arange(-10000, 1500, 10)
 P_old = np.full_like(years_iso, P0_old, dtype=float)
 P_tas = np.full_like(years_iso, P0_tas, dtype=float)
 
-# Integración con protección contra explosión
 def simulate_population(P0, years, g, alpha, dt=10):
     P = np.full_like(years, P0, dtype=float)
     for i in range(1, len(years)):
         dPdt = (g / (1 - alpha)) * P[i-1]**2
         P[i] = P[i-1] + dPdt * dt
-        if np.isinf(P[i]) or np.isnan(P[i]) or P[i] > 1000:  # Límite de seguridad
+        if np.isinf(P[i]) or np.isnan(P[i]) or P[i] > 1000:
             P[i] = 1000
-            break
-        if P[i] < 1e-12:
+            break        if P[i] < 1e-12:
             P[i] = 1e-12
     return P
 
@@ -366,7 +341,6 @@ Esto no es un colapso malthusiano (falta de recursos), sino una **transición de
 - Mayor costo de oportunidad del tiempo de las mujeres (educación, empleo).
 - Menor mortalidad infantil → no se necesitan tantos hijos para asegurar supervivencia.
 - Preferencia por invertir en la **calidad** (educación, salud) de pocos hijos, no en la **cantidad**.
-
 Como dice Kremer (1993, p. 698):
 > *“The generalized model predicts that population growth rates will eventually decline—not due to overpopulation and environmental collapse, but to increased income and declining fertility.”*
 
@@ -380,32 +354,29 @@ La diferencia entre ambas líneas muestra **el poder de la prosperidad para camb
 # === Gráfico 3: Desaceleración reciente (1900–2000) ===
 st.subheader("📉 Desaceleración del crecimiento poblacional (1900–2000)")
 
-# Simular dos escenarios: con y sin transición demográfica
 years_recent = np.arange(1900, 2001, 1)
 P_with_trans = np.full_like(years_recent, P_global[np.argmin(np.abs(years_sim - 1900))], dtype=float)
 P_without_trans = np.full_like(years_recent, P_global[np.argmin(np.abs(years_sim - 1900))], dtype=float)
 
-# Obtener valor inicial en 1900 desde la simulación global
 P_1900 = P_global[np.argmin(np.abs(years_sim - 1900))]
 P_with_trans[0] = P_1900
 P_without_trans[0] = P_1900
 
-# Simular sin transición (crecimiento puro)
+# Simular sin transición
 for i in range(1, len(years_recent)):
     dPdt = (g / (1 - alpha)) * P_without_trans[i-1]**2
     P_without_trans[i] = P_without_trans[i-1] + dPdt * 1
-    if P_without_trans[i] > 1000:  # Límite de seguridad
+    if P_without_trans[i] > 1000:
         P_without_trans[i] = 1000
         break
 
-# Simular con transición (usando el mismo mecanismo que antes, pero desde 1900)
+# Simular con transición
 for i in range(1, len(years_recent)):
     dPdt = (g / (1 - alpha)) * P_with_trans[i-1]**2
     P_with_trans[i] = P_with_trans[i-1] + dPdt * 1
     if P_with_trans[i] > 1000:
         P_with_trans[i] = 1000
         break
-    # Aplicar transición demográfica suave desde 1950
     if years_recent[i] >= 1950:
         years_since_1950 = years_recent[i] - 1950
         reduction_factor = max(0.2, 1 - 0.015 * years_since_1950)
@@ -413,16 +384,13 @@ for i in range(1, len(years_recent)):
         adjusted_growth = current_growth * reduction_factor
         P_with_trans[i] = P_with_trans[i-1] * np.exp(adjusted_growth)
 
-# Calcular tasas de crecimiento anual (% por año)
-gr_with = np.diff(np.log(P_with_trans)) * 100  # en %/año
+# Calcular tasas de crecimiento (%/año)
+gr_with = np.diff(np.log(P_with_trans)) * 100
 gr_without = np.diff(np.log(P_without_trans)) * 100
 
-# Filtrar datos históricos recientes
 mask_hist = (df_hist["Year"] >= 1900) & (df_hist["Year"] <= 2000)
 df_hist_recent = df_hist[mask_hist].copy()
 gr_hist = np.diff(np.log(df_hist_recent["Pop"])) / np.diff(df_hist_recent["Year"]) * 100
-
-# Graficar tasas de crecimiento
 fig_recent, ax_recent = plt.subplots(figsize=(8, 4))
 ax_recent.plot(
     df_hist_recent["Year"].iloc[:-1], gr_hist,
