@@ -354,6 +354,29 @@ st.pyplot(fig4)
 st.caption("💡 En ausencia de contacto, la región con mayor población inicial acumula ventaja tecnológica mucho más rápido. "
           "Esto explica por qué Tasmania perdió tecnologías básicas, mientras el Viejo Mundo desarrolló civilizaciones complejas.")
 
+st.markdown("""
+### 📉 ¿Por qué se desacelera el crecimiento poblacional si la tecnología sigue avanzando?
+
+Durante casi toda la historia humana, más tecnología → más ingreso → más hijos → más población.  
+Pero **a partir del siglo XX**, en los países más ricos, esta relación se invierte:
+
+> **Más ingreso → menos hijos por familia → crecimiento poblacional se desacelera.**
+
+Esto no es un colapso malthusiano (falta de recursos), sino una **transición demográfica** causada por:
+- Mayor costo de oportunidad del tiempo de las mujeres (educación, empleo).
+- Menor mortalidad infantil → no se necesitan tantos hijos para asegurar supervivencia.
+- Preferencia por invertir en la **calidad** (educación, salud) de pocos hijos, no en la **cantidad**.
+
+Como dice Kremer (1993, p. 698):
+> *“The generalized model predicts that population growth rates will eventually decline—not due to overpopulation and environmental collapse, but to increased income and declining fertility.”*
+
+Esta gráfica compara dos escenarios desde 1900:
+- **Con transición demográfica**: reproduce la realidad histórica (crecimiento se frena tras ~1960).
+- **Sin transición**: el modelo simple predice aceleración continua (¡incluso explosión!).
+
+La diferencia entre ambas líneas muestra **el poder de la prosperidad para cambiar los incentivos reproductivos**.
+""")
+
 # === Gráfico 3: Desaceleración reciente (1900–2000) ===
 st.subheader("📉 Desaceleración del crecimiento poblacional (1900–2000)")
 
