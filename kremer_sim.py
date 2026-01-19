@@ -353,3 +353,73 @@ st.pyplot(fig4)
 
 st.caption("💡 En ausencia de contacto, la región con mayor población inicial acumula ventaja tecnológica mucho más rápido. "
           "Esto explica por qué Tasmania perdió tecnologías básicas, mientras el Viejo Mundo desarrolló civilizaciones complejas.")
+
+# === Gráfico 3: Desaceleración reciente (1900–2000) ===
+st.subheader("📉 Desaceleración del crecimiento poblacional (1900–2000)")
+
+# Simular dos escenarios: con y sin transición demográfica
+years_recent = np.arange(1900, 2001, 1)
+P_with_trans = np.full_like(years_recent, P_global[np.argmin(np.abs(years_sim - 1900))], dtype=float)
+P_without_trans = np.full_like(years_recent, P_global[np.argmin(np.abs(years_sim - 1900))], dtype=float)
+
+# Obtener valor inicial en 1900 desde la simulación global
+P_1900 = P_global[np.argmin(np.abs(years_sim - 1900))]
+P_with_trans[0] = P_1900
+P_without_trans[0] = P_1900
+
+# Simular sin transición (crecimiento puro)
+for i in range(1, len(years_recent)):
+    dPdt = (g / (1 - alpha)) * P_without_trans[i-1]**2
+    P_without_trans[i] = P_without_trans[i-1] + dPdt * 1
+    if P_without_trans[i] > 1000:  # Límite de seguridad
+        P_without_trans[i] = 1000
+        break
+
+# Simular con transición (usando el mismo mecanismo que antes, pero desde 1900)
+for i in range(1, len(years_recent)):
+    dPdt = (g / (1 - alpha)) * P_with_trans[i-1]**2
+    P_with_trans[i] = P_with_trans[i-1] + dPdt * 1
+    if P_with_trans[i] > 1000:
+        P_with_trans[i] = 1000
+        break
+    # Aplicar transición demográfica suave desde 1950
+    if years_recent[i] >= 1950:
+        years_since_1950 = years_recent[i] - 1950
+        reduction_factor = max(0.2, 1 - 0.015 * years_since_1950)
+        current_growth = np.log(P_with_trans[i] / P_with_trans[i-1])
+        adjusted_growth = current_growth * reduction_factor
+        P_with_trans[i] = P_with_trans[i-1] * np.exp(adjusted_growth)
+
+# Calcular tasas de crecimiento anual (% por año)
+gr_with = np.diff(np.log(P_with_trans)) * 100  # en %/año
+gr_without = np.diff(np.log(P_without_trans)) * 100
+
+# Filtrar datos históricos recientes
+mask_hist = (df_hist["Year"] >= 1900) & (df_hist["Year"] <= 2000)
+df_hist_recent = df_hist[mask_hist].copy()
+gr_hist = np.diff(np.log(df_hist_recent["Pop"])) / np.diff(df_hist_recent["Year"]) * 100
+
+# Graficar tasas de crecimiento
+fig_recent, ax_recent = plt.subplots(figsize=(8, 4))
+ax_recent.plot(
+    df_hist_recent["Year"].iloc[:-1], gr_hist,
+    'o-', color="black", label="Datos históricos", markersize=4
+)
+ax_recent.plot(
+    years_recent[:-1], gr_with,
+    '-', color="green", label="Con transición demográfica"
+)
+ax_recent.plot(
+    years_recent[:-1], gr_without,
+    '--', color="red", label="Sin transición demográfica"
+)
+
+ax_recent.set_xlabel("Año")
+ax_recent.set_ylabel("Tasa de crecimiento anual (%)")
+ax_recent.set_title("Desaceleración del crecimiento poblacional (1900–2000)")
+ax_recent.legend()
+ax_recent.grid(True, ls="--", lw=0.5)
+st.pyplot(fig_recent)
+
+st.caption("💡 La transición demográfica explica por qué el crecimiento poblacional se desacelera tras ~1960, "
+          "a pesar de que la tecnología sigue avanzando. Sin ella, el modelo predice aceleración continua.")
