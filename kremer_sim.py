@@ -280,20 +280,24 @@ with col3:
         "Población inicial: Viejo Mundo (millones)",
         min_value=1.0,
         max_value=1000.0,
-        value=50.0,
+        value=st.session_state.P0_old_millions,
         step=10.0,
-        help="Valor histórico estimado: ~50 millones en 10,000 A.C."
+        key="P0_old_input"
     )
 with col4:
     P0_tas_millions = st.number_input(
         "Población inicial: Tasmania (millones)",
         min_value=0.001,
         max_value=10.0,
-        value=0.004,
+        value=st.session_state.P0_tas_millions,
         step=0.001,
         format="%.3f",
-        help="Valor histórico: ~4,000 personas = 0.004 millones"
+        key="P0_tas_input"
     )
+
+# Actualizar estado
+st.session_state.P0_old_millions = P0_old_millions
+st.session_state.P0_tas_millions = P0_tas_millions
 
 # Convertir a billones
 P0_old = P0_old_millions / 1000
