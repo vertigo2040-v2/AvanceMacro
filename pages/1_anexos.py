@@ -39,6 +39,12 @@ donde:
 
 Dado que **la tierra es un recurso fijo y no crece con el tiempo**, Kremer **normaliza $T = 1$** sin pérdida de generalidad. Esto simplifica la función a:
 
+El parámetro $\alpha$ ($0 < \alpha < 1$) es la **elasticidad de la producción agrícola con respecto a la tierra fija**. 
+Dado que la tierra no crece con el tiempo, $\alpha$ mide la **intensidad del cuello de botella malthusiano**: 
+cuanto mayor sea $\alpha$, más limitada está la población por la disponibilidad de recursos naturales. 
+Este parámetro también controla la respuesta de la población al progreso tecnológico: 
+una $\alpha$ alta implica un crecimiento más lento; una $\alpha$ baja, un crecimiento más explosivo.
+
 $$
 Y(t) = [A(t) P(t)]^{1 - \alpha}
 \tag{1}
