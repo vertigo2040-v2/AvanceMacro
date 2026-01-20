@@ -10,6 +10,7 @@ de los modelos malthusianos o neoclásicos tradicionales.
 
 st.header("1. Intuición central: una bola de nieve endógena")
 
+st.markdown(r"""
 Kremer propone un mecanismo simple pero poderoso:
 
 > **Más personas → más inventores → más tecnología → más personas → …**
@@ -17,11 +18,11 @@ Kremer propone un mecanismo simple pero poderoso:
 Este ciclo no es exógeno (como en Solow), sino **endógeno**: el tamaño de la población impulsa directamente el progreso tecnológico, y este a su vez permite sostener una población mayor.
 
 A diferencia del modelo malthusiano clásico —donde la tecnología es dada y la población simplemente se ajusta a ella—, aquí **la población es motor del cambio**, no solo resultado.
-
----
+""")
 
 st.header("2. Supuestos económicos clave")
 
+st.markdown(r"""
 El modelo descansa en tres pilares microeconómicos:
 
 1. **No rivalidad de las ideas**:  
@@ -34,11 +35,11 @@ El modelo descansa en tres pilares microeconómicos:
    Cada individuo tiene una probabilidad fija $g$ de generar una innovación útil. Por lo tanto, la tasa agregada de innovación es $g P(t)$.
 
 Estos supuestos implican que **el crecimiento no se desacelera con el tiempo**, sino que **se acelera**: cuanta más gente hay, más rápido avanza la tecnología, y más rápido crece la población.
-
----
+""")
 
 st.header("3. Interacción dinámica: el bucle de retroalimentación")
 
+st.markdown(r"""
 La dinámica se cierra en dos ecuaciones:
 
 1. **Producción agrícola limitada por tierra fija**:
@@ -69,11 +70,11 @@ Esta ecuación captura la esencia del modelo:
 > **La tasa de crecimiento poblacional es proporcional al nivel de población**.
 
 Esto explica empíricamente la relación observada en los datos históricos desde 1,000,000 A.C. hasta ~1950.
-
----
+""")
 
 st.header("4. ¿Por qué no explota en la realidad? La transición demográfica")
 
+st.markdown(r"""
 El modelo básico predice una "singularidad demográfica" (población infinita en tiempo finito).  
 Sin embargo, **en el siglo XX, el crecimiento se desacelera**.
 
@@ -82,8 +83,7 @@ cuando el ingreso per cápita supera un umbral, **las familias eligen tener meno
 Esto rompe el ciclo malthusiano no por escasez, sino por **prosperidad**.
 
 Así, el modelo no falla: **su extensión generalizada predice la transición demográfica como consecuencia natural del progreso**.
-
----
+""")
 
 st.markdown("""
 **Conclusión**: El modelo de Kremer no solo describe el pasado, sino que anticipa por qué el crecimiento demográfico moderno se detiene:  
