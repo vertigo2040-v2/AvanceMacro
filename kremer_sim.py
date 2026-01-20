@@ -77,7 +77,7 @@ if st.button("🎯 Usar parámetros calibrados (Kremer, 1993)"):
 
 # Inicializar estado con las CLAVES DE LOS WIDGETS
 if "g_slider" not in st.session_state:
-    st.session_state["g_slider"] = 0.008
+    st.session_state["g_slider"] = 0.005
 if "alpha_slider" not in st.session_state:
     st.session_state["alpha_slider"] = 0.7
 if "pop0_global_input" not in st.session_state:
