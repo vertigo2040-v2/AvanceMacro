@@ -155,7 +155,7 @@ if include_dem_trans and not explosion_detected:
                 P_global[i] = P_global[i-1] * np.exp(adjusted_growth)
 
 # === Gráfico 1: Visión general (todo el rango) ===
-fig1_general, ax1_general = plt.subplots(figsize=(8, 8))
+fig1_general, ax1_general = plt.subplots(figsize=(10, 4))
 ax1_general.plot(df_hist["Year"], df_hist["Pop"], 'o-', label="Datos históricos (Kremer)", color="black", markersize=3)
 ax1_general.plot(years_sim, P_global, '-', label="Simulación global", color="red")
 ax1_general.set_yscale("log")
