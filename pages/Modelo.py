@@ -170,38 +170,64 @@ ax1_general.legend()
 ax1_general.grid(True, which="both", ls="--", lw=0.5)
 st.pyplot(fig1_general)
 
-# === Gráfico 2: Zoom en los últimos 12,000 años ===
-fig1_zoom, ax1_zoom = plt.subplots(figsize=(8, 4))
+# === Gráfico 2: Tasa de crecimiento vs. nivel de población (CORREGIDO) ===
+# Filtrar simulación hasta 1950
+mask_sim_reg = years_sim <= 1950
+years_sim_reg = years_sim[mask_sim_reg]
+P_global_reg = P_global[mask_sim_reg]
 
-mask_zoom = (df_hist["Year"] >= -10000) & (df_hist["Year"] <= 2000)
-df_hist_zoom = df_hist[mask_zoom].copy()
+# Calcular tasas de crecimiento anual para la simulación
+# Usamos una aproximación central para evitar sesgo
+gr_sim = np.zeros_like(P_global_reg)
+for i in range(1, len(P_global_reg)-1):
+    # Aproximación de derivada central
+    dt = years_sim_reg[i+1] - years_sim_reg[i-1]
+    gr_sim[i] = (np.log(P_global_reg[i+1]) - np.log(P_global_reg[i-1])) / dt
+# Extremos: usar diferencias hacia adelante y atrás
+gr_sim[0] = (np.log(P_global_reg[1]) - np.log(P_global_reg[0])) / (years_sim_reg[1] - years_sim_reg[0])
+gr_sim[-1] = (np.log(P_global_reg[-1]) - np.log(P_global_reg[-2])) / (years_sim_reg[-1] - years_sim_reg[-2])
 
-mask_sim_zoom = (years_sim >= -10000) & (years_sim <= 2000)
-years_sim_zoom = years_sim[mask_sim_zoom]
-P_global_zoom = P_global[mask_sim_zoom]
+# Datos históricos hasta 1950
+mask_hist_reg = df_hist["Year"] <= 1950
+df_hist_reg = df_hist[mask_hist_reg].copy()
+hist_gr = np.diff(np.log(df_hist_reg["Pop"])) / np.diff(df_hist_reg["Year"])
+hist_valid = (df_hist_reg["Pop"].iloc[:-1] > 0) & np.isfinite(hist_gr)
 
-ax1_zoom.plot(df_hist_zoom["Year"], df_hist_zoom["Pop"], 'o-', label="Datos históricos (Kremer)", color="black", markersize=4)
-ax1_zoom.plot(years_sim_zoom, P_global_zoom, '-', label="Simulación global", color="red")
+fig2, ax2 = plt.subplots(figsize=(8, 6))
+ax2.scatter(
+    df_hist_reg["Pop"].iloc[:-1][hist_valid],
+    hist_gr[hist_valid],
+    label="Datos históricos (hasta 1950)",
+    color="black",
+    s=15
+)
+ax2.plot(
+    P_global_reg,
+    gr_sim,
+    'r-',  # Línea roja continua
+    label="Simulación (hasta 1950)"
+)
 
-if st.checkbox("Usar escala logarítmica (zoom)", True):
-    ax1_zoom.set_yscale("log")
-    ax1_zoom.text(0.05, 0.95, 
-                 "Escala log → cada salto = multiplicación",
-                 transform=ax1_zoom.transAxes, fontsize=8, verticalalignment='top', bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', alpha=0.5))
-else:
-    ax1_zoom.set_yscale("linear")
+# Añadir regresión lineal sin intercepto (como en Kremer)
+X = P_global_reg
+y = gr_sim
+valid_reg = (X > 0) & np.isfinite(y)
+if np.any(valid_reg):
+    X = X[valid_reg]
+    y = y[valid_reg]
+    beta = np.sum(X * y) / np.sum(X**2)  # regresión sin intercepto
+    ax2.plot(X, beta * X, '--', color="blue", label=f"Regresión simulada: β={beta:.5f}")
 
-ax1_zoom.set_xlabel("Año (negativo = A.C., positivo = D.C.)")
-ax1_zoom.set_ylabel("Población (billones)")
-ax1_zoom.set_title("Zoom: Evolución de la población (últimos 12,000 años)")
+ax2.set_xlabel("Población (billones)")
+ax2.set_ylabel("Tasa de crecimiento anual")
+ax2.set_title("Tasa de crecimiento vs. nivel de población (hasta 1950)")
+ax2.legend()
+ax2.grid(True, ls="--", lw=0.5)
+st.pyplot(fig2)
 
-ax1_zoom.set_xticks([-10000, -5000, -1000, 0, 500, 1000, 1500, 1900, 2000])
-ax1_zoom.set_xticklabels(["-10K", "-5K", "-1K", "0", "500", "1K", "1.5K", "1900", "2000"], rotation=45)
-
-ax1_zoom.legend()
-ax1_zoom.grid(True, which="both", ls="--", lw=0.5)
-st.pyplot(fig1_zoom)
-
+# Mostrar la pendiente estimada
+if 'beta' in locals():
+    st.markdown(f"**Pendiente estimada de la simulación:** {beta:.5f}  \n**Pendiente reportada por Kremer:** 0.00054")
 # Mensaje dinámico según g
 if g < 0.0005:
     st.warning("⚠️ g muy bajo: el crecimiento será muy lento.")
