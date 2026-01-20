@@ -69,7 +69,7 @@ with st.expander("ℹ️ ¿Cómo usar esta simulación?"):
 
 # === Botón de parámetros calibrados ===
 if st.button("🎯 Usar parámetros calibrados (Kremer, 1993)"):
-    st.session_state["g_slider"] = 0.0015
+    st.session_state["g_slider"] = 0.00016
     st.session_state["alpha_slider"] = 0.7
     st.session_state["pop0_global_input"] = 0.004
     st.session_state["P0_old_input"] = 50.0
@@ -92,10 +92,10 @@ col1, col2 = st.columns(2)
 with col1:
     g = st.slider(
         "Productividad de investigación (g)",
-        min_value=0.001,
-        max_value=0.02,
+        min_value=0.0001,
+        max_value=0.002,
         value=st.session_state["g_slider"],
-        step=0.001,
+        step=0.0001,
         key="g_slider"
     )
     alpha = st.slider(
