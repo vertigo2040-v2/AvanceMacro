@@ -92,10 +92,10 @@ col1, col2 = st.columns(2)
 with col1:
     g = st.slider(
         "Productividad de investigación (g)",
-        min_value=0.0001,
-        max_value=0.002,
+        min_value=0.001,
+        max_value=0.02,
         value=st.session_state["g_slider"],
-        step=0.0001,
+        step=0.001,
         key="g_slider"
     )
     alpha = st.slider(
