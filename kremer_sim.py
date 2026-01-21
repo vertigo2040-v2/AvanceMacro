@@ -470,3 +470,39 @@ st.markdown("""
 - **Pico en \( y^* \)**: Representa el punto de inflexión donde comienza la transición demográfica.  
 - Esta dinámica explica por qué el crecimiento poblacional se desacelera después de 1950, **no por escasez, sino por prosperidad**.
 """)
+
+# === Gráfico B: Figura III — Crecimiento poblacional en diferentes puntos del tiempo ===
+st.subheader("📈 Figura III: Crecimiento poblacional en diferentes puntos del tiempo")
+
+# Calcular tasas de crecimiento en 3 puntos clave
+P_points = [0.004, 0.1, 1.0]  # Ejemplos: 4M, 100M, 1B
+n_points = [g / (1 - alpha) * P for P in P_points]
+
+fig_iii, ax_iii = plt.subplots(figsize=(8, 4))
+ax_iii.plot(P_global, np.diff(np.log(P_global)) / np.diff(years_sim) * 100, 'r-', label="Tasa de crecimiento simulada")
+ax_iii.scatter(P_points, n_points, color='blue', s=50, zorder=5, label="Puntos clave del modelo")
+
+for i, (P, n) in enumerate(zip(P_points, n_points)):
+    ax_iii.annotate(f'P={P:.3f}\nn={n:.4f}%', 
+                   (P, n), 
+                   textcoords="offset points", 
+                   xytext=(0,10), 
+                   ha='center')
+
+ax_iii.set_xlabel("Población (billones)")
+ax_iii.set_ylabel("Tasa de crecimiento anual (%)")
+ax_iii.set_title("Figura III: Tasa de crecimiento vs. nivel de población")
+ax_iii.legend()
+ax_iii.grid(True, ls="--", lw=0.5)
+st.pyplot(fig_iii)
+
+st.markdown("""
+**Interpretación económica:**  
+- El modelo predice que **la tasa de crecimiento poblacional es proporcional al nivel de población**:  
+  \[
+  \frac{\dot{P}}{P} = k P
+  \]
+- Por tanto, **cuanto más grande es la población, más rápido crece**.
+- Esto genera un **ciclo de retroalimentación positiva**: más personas → más inventores → más tecnología → más población → ...
+- La línea roja muestra cómo esta relación se cumple en tu simulación.
+""")
