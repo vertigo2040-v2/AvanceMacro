@@ -17,11 +17,11 @@ df_hist = pd.DataFrame(data)
 df_hist["Pop"] = df_hist["Pop_millions"] / 1000  # en billones
 
 st.title("Simulación del Modelo de Kremer (1993)")
+with st.expander("ℹ️ Contextoo teórico del modelo"):
 st.markdown("""
 Este modelo muestra cómo **más población → más inventores → más tecnología → más población**, 
 generando crecimiento *super-exponencial* hasta la transición demográfica reciente.
-""")
-st.markdown("""
+
 ## 🧠 ¿Qué explica esta simulación?
 
 Esta aplicación recrea el modelo central del artículo **“Population Growth and Technological Change: One Million B.C. to 1990”** de **Michael Kremer (1993)**.
