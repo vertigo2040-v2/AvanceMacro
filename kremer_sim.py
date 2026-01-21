@@ -123,7 +123,7 @@ if pop0_global < 0.001:
     st.warning("⚠️ Población inicial muy baja (<1 millón). El crecimiento será extremadamente lento.")
 
 # === Simulación global ===
-years_sim = np.arange(-10000, 2000, 10) 
+years_sim = np.arange(-10000, 2000, 20) 
 P_global = np.full_like(years_sim, pop0_global, dtype=float) 
 dt = 10
 
@@ -195,8 +195,8 @@ ax1_zoom.set_xlabel("Año (negativo = A.C., positivo = D.C.)")
 ax1_zoom.set_ylabel("Población (billones)")
 ax1_zoom.set_title("Zoom: Evolución de la población (últimos 12,000 años)")
 
-ax1_zoom.set_xticks([-10000, 0, 500, 1000, 1500, 1900, 2000])
-ax1_zoom.set_xticklabels(["-10K", "0", "500", "1K", "1.5K", "1900", "2000"], rotation=45)
+ax1_zoom.set_xticks([-5000, -1000, 0, 500, 1000, 1500, 1900, 2000])
+ax1_zoom.set_xticklabels(["-5K", "-1K", "0", "500", "1K", "1.5K", "1900", "2000"], rotation=45)
 
 ax1_zoom.legend()
 ax1_zoom.grid(True, which="both", ls="--", lw=0.5)
