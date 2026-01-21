@@ -155,7 +155,7 @@ if include_dem_trans and not explosion_detected:
                 P_global[i] = P_global[i-1] * np.exp(adjusted_growth)
 
 # === Gráfico 1: Visión general (todo el rango) ===
-fig1_general, ax1_general = plt.subplots(figsize=(10, 4))
+fig1_general, ax1_general = plt.subplots(figsize=(8, 4))
 ax1_general.plot(df_hist["Year"], df_hist["Pop"], 'o-', label="Datos históricos (Kremer)", color="black", markersize=3)
 ax1_general.plot(years_sim, P_global, '-', label="Simulación global", color="red")
 ax1_general.set_yscale("log")
@@ -163,8 +163,8 @@ ax1_general.set_xlabel("Año (negativo = A.C., positivo = D.C.)")
 ax1_general.set_ylabel("Población (billones)")
 ax1_general.set_title("Evolución global de la población (visión general)")
 
-ax1_general.set_xticks([-1000000, -500000, -100000, -10000, 0, 1000, 2000])
-ax1_general.set_xticklabels(["-1M", "-500K", "-100K", "-10K", "0", "1K", "2K"], rotation=45)
+ax1_general.set_xticks([-1000000, -500000, -100000, -10000, 0, 10, 100, 500, 1000, 2000])
+ax1_general.set_xticklabels(["-1M", "-500K", "-100K", "-10K", "0", "10", "100", "500", "1K", "2K"], rotation=45)
 
 ax1_general.legend()
 ax1_general.grid(True, which="both", ls="--", lw=0.5)
