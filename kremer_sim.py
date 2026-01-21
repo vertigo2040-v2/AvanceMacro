@@ -163,8 +163,8 @@ ax1_general.set_xlabel("Año (negativo = A.C., positivo = D.C.)")
 ax1_general.set_ylabel("Población (billones)")
 ax1_general.set_title("Evolución global de la población (visión general)")
 
-ax1_general.set_xticks([-1000000, -500000, -100000, -10000, 0, 10, 100, 500, 1000, 2000])
-ax1_general.set_xticklabels(["-1M", "-500K", "-100K", "-10K", "0", "10", "100", "500", "1K", "2K"], rotation=45)
+ax1_general.set_xticks([-1000000, -500000, -100000, -10000, 0, 1000, 2000])
+ax1_general.set_xticklabels(["-1M", "-500K", "-100K", "-10K", "0", "1K", "2K"], rotation=45)
 
 ax1_general.legend()
 ax1_general.grid(True, which="both", ls="--", lw=0.5)
