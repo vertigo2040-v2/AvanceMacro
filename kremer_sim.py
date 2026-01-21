@@ -443,11 +443,14 @@ st.caption("💡 La transición demográfica explica por qué el crecimiento pob
 # === Gráfico 5: Tasa de crecimiento vs. ingreso per cápita (n(y)) ===
 st.subheader("📈 Tasa de crecimiento poblacional vs. ingreso per cápita")
 
-# Calcular ingreso per cápita relativo: y ∝ P^(α / (1 - α))
-if alpha < 1:
-    y_sim = P_global ** (alpha / (1 - alpha))
-else:
-    y_sim = np.ones_like(P_global)  # fallback
+# Calcular ingreso per cápita relativo: y(t) = [A(t) P(t)]^(-α)
+# Asumimos que A(t) ∝ P(t)^((1-α)/α) → y(t) ∝ P(t)^(-α * (1-α)/α) = P(t)^(-(1-α))
+# Pero más simple: usar la relación implícita en el modelo
+# y(t) = [A(t) P(t)]^(-α) ∝ P(t)^(-α * (1-α)/α) = P(t)^(-(1-α))
+
+# Para visualización, normalizamos a 1 en el año 0
+y_sim = P_global ** (-(1 - alpha))
+y_sim = y_sim / y_sim[0]  # Normalizar a 1 en t=0
 
 # Calcular tasa de crecimiento anual (%)
 gr_sim_pct = np.diff(np.log(P_global)) * 100  # en %/año
