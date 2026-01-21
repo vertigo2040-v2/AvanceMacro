@@ -440,5 +440,45 @@ st.pyplot(fig_recent)
 st.caption("💡 La transición demográfica explica por qué el crecimiento poblacional se desacelera tras ~1960, "
           "a pesar de que la tecnología sigue avanzando. Sin ella, el modelo predice aceleración continua.")
 
+# === Gráfico 5: Tasa de crecimiento vs. ingreso per cápita (n(y)) ===
+st.subheader("📈 Tasa de crecimiento poblacional vs. ingreso per cápita")
 
+# Calcular ingreso per cápita relativo: y ∝ P^(α / (1 - α))
+if alpha < 1:
+    y_sim = P_global ** (alpha / (1 - alpha))
+else:
+    y_sim = np.ones_like(P_global)  # fallback
+
+# Calcular tasa de crecimiento anual (%)
+gr_sim_pct = np.diff(np.log(P_global)) * 100  # en %/año
+y_mid = y_sim[:-1]  # alinear con gr_sim
+
+# Crear curva teórica n(y): forma de campana
+y_theory = np.linspace(y_sim.min(), y_sim.max() * 1.2, 200)
+y_star = np.median(y_theory)  # punto máximo (ajustable)
+n_theory = np.where(
+    y_theory <= y_star,
+    0.02 * (y_theory / y_star),          # rama creciente
+    0.02 * (2 - y_theory / y_star)       # rama decreciente
+)
+n_theory = np.maximum(n_theory, 0)
+
+fig_ny, ax_ny = plt.subplots(figsize=(8, 4))
+ax_ny.plot(y_theory, n_theory, 'k--', label=r"Curva teórica $n(y)$", linewidth=1.5)
+ax_ny.plot(y_mid, gr_sim_pct, 'r-', label="Trayectoria simulada", linewidth=2)
+
+ax_ny.set_xlabel("Ingreso per cápita (relativo)")
+ax_ny.set_ylabel("Tasa de crecimiento poblacional (% anual)")
+ax_ny.set_title("Dinámica de la transición demográfica")
+ax_ny.legend()
+ax_ny.grid(True, ls="--", lw=0.5)
+st.pyplot(fig_ny)
+
+st.markdown("""
+**Interpretación económica:**  
+- En etapas tempranas (ingreso bajo), más ingreso → más hijos → crecimiento ↑.  
+- Tras alcanzar un umbral (\(y^*\)), más ingreso → menos hijos → crecimiento ↓.  
+- La línea roja muestra cómo tu simulación recorre esta curva con el tiempo.  
+- Si activaste la transición demográfica, verás que la trayectoria gira en la rama derecha.
+""")
 
