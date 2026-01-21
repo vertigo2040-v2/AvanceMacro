@@ -123,9 +123,9 @@ if pop0_global < 0.001:
     st.warning("⚠️ Población inicial muy baja (<1 millón). El crecimiento será extremadamente lento.")
 
 # === Simulación global ===
-years_sim = np.arange(-10000, 2000, 100) 
+years_sim = np.arange(-10000, 2000, 500) 
 P_global = np.full_like(years_sim, pop0_global, dtype=float) 
-dt = 100 
+dt = 10
 
 # Integración numérica robusta con detección de explosión
 explosion_detected = False
