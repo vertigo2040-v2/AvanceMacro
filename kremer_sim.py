@@ -18,38 +18,39 @@ df_hist["Pop"] = df_hist["Pop_millions"] / 1000  # en billones
 
 st.title("Simulación del Modelo de Kremer (1993)")
 with st.expander("ℹ️ Contextoo teórico del modelo"):
-st.markdown("""
-Este modelo muestra cómo **más población → más inventores → más tecnología → más población**, 
-generando crecimiento *super-exponencial* hasta la transición demográfica reciente.
+    st.markdown("""
+    Este modelo muestra cómo **más población → más inventores → más tecnología → más población**, 
+    generando crecimiento *super-exponencial* hasta la transición demográfica reciente.
+    """)
+    st.markdown("""
+    ## 🧠 ¿Qué explica esta simulación?
 
-## 🧠 ¿Qué explica esta simulación?
+    Esta aplicación recrea el modelo central del artículo **“Population Growth and Technological Change: One Million B.C. to 1990”** de **Michael Kremer (1993)**.
 
-Esta aplicación recrea el modelo central del artículo **“Population Growth and Technological Change: One Million B.C. to 1990”** de **Michael Kremer (1993)**.
+    ### 🎯 Objetivo del modelo
+    Kremer propone una explicación unificada del crecimiento demográfico mundial durante casi un millón de años, basada en dos ideas clave:
 
-### 🎯 Objetivo del modelo
-Kremer propone una explicación unificada del crecimiento demográfico mundial durante casi un millón de años, basada en dos ideas clave:
+    1. **La tecnología es no rival**: una innovación puede ser usada por todos sin agotarse. Por lo tanto, **más personas → más inventores → más tecnología**.
+    2. **La población está limitada por la tecnología disponible** (visión malthusiana): mejor tecnología → más alimentos → más personas pueden sobrevivir.
 
-1. **La tecnología es no rival**: una innovación puede ser usada por todos sin agotarse. Por lo tanto, **más personas → más inventores → más tecnología**.
-2. **La población está limitada por la tecnología disponible** (visión malthusiana): mejor tecnología → más alimentos → más personas pueden sobrevivir.
+    ### 🔁 Mecanismo central
+    Estas dos fuerzas se retroalimentan:
+    > **Población ↑ → Innovación ↑ → Tecnología ↑ → Población ↑**
 
-### 🔁 Mecanismo central
-Estas dos fuerzas se retroalimentan:
-> **Población ↑ → Innovación ↑ → Tecnología ↑ → Población ↑**
+    Este ciclo genera un **crecimiento super-exponencial**: no solo la población crece, sino que su *tasa de crecimiento también aumenta con el tiempo*.
 
-Este ciclo genera un **crecimiento super-exponencial**: no solo la población crece, sino que su *tasa de crecimiento también aumenta con el tiempo*.
+    ### ⚖️ ¿Dónde está el equilibrio?
+    - En el largo plazo histórico (hasta ~1950), **no hay equilibrio estable**: el sistema se acelera continuamente.
+    - Solo recientemente, con el aumento del ingreso per cápita, surge la **transición demográfica**: las familias eligen tener menos hijos, rompiendo el ciclo malthusiano.
+    - Pero durante la mayor parte de la historia humana, **la población fue el motor —y no el freno— del progreso tecnológico**.
 
-### ⚖️ ¿Dónde está el equilibrio?
-- En el largo plazo histórico (hasta ~1950), **no hay equilibrio estable**: el sistema se acelera continuamente.
-- Solo recientemente, con el aumento del ingreso per cápita, surge la **transición demográfica**: las familias eligen tener menos hijos, rompiendo el ciclo malthusiano.
-- Pero durante la mayor parte de la historia humana, **la población fue el motor —y no el freno— del progreso tecnológico**.
+    ### 🌍 Evidencia empírica
+    Kremer muestra que:
+    - La tasa de crecimiento poblacional ha sido aproximadamente **proporcional al nivel de población** (ver Figura I del paper).
+    - Entre sociedades aisladas (ej. Tasmania vs. Viejo Mundo), **las más pobladas desarrollaron más tecnología**.
 
-### 🌍 Evidencia empírica
-Kremer muestra que:
-- La tasa de crecimiento poblacional ha sido aproximadamente **proporcional al nivel de población** (ver Figura I del paper).
-- Entre sociedades aisladas (ej. Tasmania vs. Viejo Mundo), **las más pobladas desarrollaron más tecnología**.
-
-Esta simulación te permite explorar esos mecanismos en tiempo real.
-""")
+    Esta simulación te permite explorar esos mecanismos en tiempo real.
+    """)
 
 # === Instrucciones interactivas ===
 with st.expander("ℹ️ ¿Cómo usar esta simulación?"):
