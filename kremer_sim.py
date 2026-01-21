@@ -479,7 +479,11 @@ P_points = [0.004, 0.1, 1.0]  # Ejemplos: 4M, 100M, 1B
 n_points = [g / (1 - alpha) * P for P in P_points]
 
 fig_iii, ax_iii = plt.subplots(figsize=(8, 4))
-ax_iii.plot(P_global, np.diff(np.log(P_global)) / np.diff(years_sim) * 100, 'r-', label="Tasa de crecimiento simulada")
+# Calcular tasas de crecimiento
+gr_sim = np.diff(np.log(P_global)) / np.diff(years_sim) * 100  # (% anual)
+P_for_plot = P_global[:-1]  # Alinear con el número de intervalos
+
+ax_iii.plot(P_for_plot, gr_sim, 'r-', label="Tasa de crecimiento simulada")
 ax_iii.scatter(P_points, n_points, color='blue', s=50, zorder=5, label="Puntos clave del modelo")
 
 for i, (P, n) in enumerate(zip(P_points, n_points)):
