@@ -195,8 +195,8 @@ ax1_zoom.set_xlabel("Año (negativo = A.C., positivo = D.C.)")
 ax1_zoom.set_ylabel("Población (billones)")
 ax1_zoom.set_title("Zoom: Evolución de la población (últimos 12,000 años)")
 
-ax1_zoom.set_xticks([-10000, -5000, 0, 500, 1000, 1500, 1900, 2000])
-ax1_zoom.set_xticklabels(["-10K", "-5K", "0", "500", "1K", "1.5K", "1900", "2000"], rotation=45)
+ax1_zoom.set_xticks([-10000, 0, 500, 1000, 1500, 1900, 2000])
+ax1_zoom.set_xticklabels(["-10K", "0", "500", "1K", "1.5K", "1900", "2000"], rotation=45)
 
 ax1_zoom.legend()
 ax1_zoom.grid(True, which="both", ls="--", lw=0.5)
