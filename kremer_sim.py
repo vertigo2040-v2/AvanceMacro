@@ -17,7 +17,7 @@ df_hist = pd.DataFrame(data)
 df_hist["Pop"] = df_hist["Pop_millions"] / 1000  # en billones
 
 st.title("Simulación del Modelo de Kremer (1993)")
-with st.expander("ℹ️ Contextoo teórico del modelo"):
+with st.expander("ℹ️ Contexto teórico del modelo"):
     st.markdown("""
     Este modelo muestra cómo **más población → más inventores → más tecnología → más población**, 
     generando crecimiento *super-exponencial* hasta la transición demográfica reciente.
@@ -306,7 +306,7 @@ def simulate_population(P0, years, g, alpha, dt=10):
 P_old = simulate_population(P0_old, years_iso, g, alpha)
 P_tas = simulate_population(P0_tas, years_iso, g, alpha)
 
-# Gráfico 3: Comparación de trayectorias
+# Gráfico 5: Comparación de trayectorias
 fig3, ax3 = plt.subplots(figsize=(8, 4))
 ax3.plot(years_iso, P_old, label=f"Viejo Mundo ({P0_old_millions:.0f}M)", color="blue")
 ax3.plot(years_iso, P_tas, label=f"Tasmania ({P0_tas_millions:.3f}M)", color="orange")
@@ -336,28 +336,44 @@ st.pyplot(fig4)
 st.caption("💡 En ausencia de contacto, la región con mayor población inicial acumula ventaja tecnológica mucho más rápido. "
           "Esto explica por qué Tasmania perdió tecnologías básicas, mientras el Viejo Mundo desarrolló civilizaciones complejas.")
 
-st.markdown("""
-### 📉 ¿Por qué se desacelera el crecimiento poblacional si la tecnología sigue avanzando?
+with st.expander("📉 La desaceleración del crecimiento poblacional"):
+    st.markdown("""
+    ### 📉 ¿Por qué se desacelera el crecimiento poblacional si la tecnología sigue avanzando?
 
-Durante casi toda la historia humana, más tecnología → más ingreso → más hijos → más población.  
-Pero **a partir del siglo XX**, en los países más ricos, esta relación se invierte:
+    Durante casi toda la historia humana, más tecnología → más ingreso → más hijos → más población.  
+    Pero **a partir del siglo XX**, en los países más ricos, esta relación se invierte:
 
-> **Más ingreso → menos hijos por familia → crecimiento poblacional se desacelera.**
+    > **Más ingreso → menos hijos por familia → crecimiento poblacional se desacelera.**
 
-Esto no es un colapso malthusiano (falta de recursos), sino una **transición demográfica** causada por:
-- Mayor costo de oportunidad del tiempo de las mujeres (educación, empleo).
-- Menor mortalidad infantil → no se necesitan tantos hijos para asegurar supervivencia.
-- Preferencia por invertir en la **calidad** (educación, salud) de pocos hijos, no en la **cantidad**.
+    Esto no es un colapso malthusiano (falta de recursos), sino una **transición demográfica** causada por:
+    - Mayor costo de oportunidad del tiempo de las mujeres (educación, empleo).
+    - Menor mortalidad infantil → no se necesitan tantos hijos para asegurar supervivencia.
+    - Preferencia por invertir en la **calidad** (educación, salud) de pocos hijos, no en la **cantidad**.
 
-Como dice Kremer (1993, p. 698):
-> *“The generalized model predicts that population growth rates will eventually decline—not due to overpopulation and environmental collapse, but to increased income and declining fertility.”*
+    Como dice Kremer (1993, p. 698):
+    > *“The generalized model predicts that population growth rates will eventually decline—not due to overpopulation and environmental collapse, but to increased income and declining fertility.”*
 
-Esta gráfica compara dos escenarios desde 1900:
-- **Con transición demográfica**: reproduce la realidad histórica (crecimiento se frena tras ~1960).
-- **Sin transición**: el modelo simple predice aceleración continua (¡incluso explosión!).
+    Esta gráfica compara dos escenarios desde 1900:
+    - **Con transición demográfica**: reproduce la realidad histórica (crecimiento se frena tras ~1960).
+    - **Sin transición**: el modelo simple predice aceleración continua (¡incluso explosión!).
 
-La diferencia entre ambas líneas muestra **el poder de la prosperidad para cambiar los incentivos reproductivos**.
-""")
+    La diferencia entre ambas líneas muestra **el poder de la prosperidad para cambiar los incentivos reproductivos**.
+    """)
+    st.header("📉 transición demográfica")
+
+    st.markdown(r"""
+    El modelo básico no explica la desaceleración post-1950. Kremer lo generaliza asumiendo que la tasa de crecimiento poblacional es una función del ingreso per cápita $y$:
+
+    $$
+    n = n(y), \quad \text{con } 
+    \begin{cases}
+    n'(y) > 0 & \text{si } y \text{ es bajo} \\
+    n'(y) < 0 & \text{si } y \text{ es alto}
+    \end{cases}
+    $$
+
+    Cuando $y$ supera un umbral (por mayor educación, menor mortalidad infantil, etc.), **la fertilidad cae**, rompiendo el ciclo malthusiano. Esto es coherente con la teoría del capital humano (Becker, 1960) y con la evidencia empírica.
+    """)
 
 # === Gráfico 3: Desaceleración reciente (1900–2000) ===
 st.subheader("📉 Desaceleración del crecimiento poblacional (1900–2000)")
@@ -424,18 +440,5 @@ st.pyplot(fig_recent)
 st.caption("💡 La transición demográfica explica por qué el crecimiento poblacional se desacelera tras ~1960, "
           "a pesar de que la tecnología sigue avanzando. Sin ella, el modelo predice aceleración continua.")
 
-st.header("transición demográfica")
 
-st.markdown(r"""
-El modelo básico no explica la desaceleración post-1950. Kremer lo generaliza asumiendo que la tasa de crecimiento poblacional es una función del ingreso per cápita $y$:
 
-$$
-n = n(y), \quad \text{con } 
-\begin{cases}
-n'(y) > 0 & \text{si } y \text{ es bajo} \\
-n'(y) < 0 & \text{si } y \text{ es alto}
-\end{cases}
-$$
-
-Cuando $y$ supera un umbral (por mayor educación, menor mortalidad infantil, etc.), **la fertilidad cae**, rompiendo el ciclo malthusiano. Esto es coherente con la teoría del capital humano (Becker, 1960) y con la evidencia empírica.
-""")
