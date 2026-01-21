@@ -471,42 +471,45 @@ st.markdown("""
 - Esta dinámica explica por qué el crecimiento poblacional se desacelera después de 1950, **no por escasez, sino por prosperidad**.
 """)
 
-# === Gráfico B: Figura III — Crecimiento poblacional en diferentes puntos del tiempo ===
-st.subheader("📈 Figura III: Crecimiento poblacional en diferentes puntos del tiempo")
+# === Figura II: Relación teórica n(y) — Independiente de la simulación ===
+st.subheader("📈 Figura II: Tasa de crecimiento poblacional vs. ingreso per cápita (Kremer, 1993)")
 
-# Calcular tasas de crecimiento en 3 puntos clave
-P_points = [0.004, 0.1, 1.0]  # Ejemplos: 4M, 100M, 1B
-n_points = [g / (1 - alpha) * P for P in P_points]
+# Crear ejes teóricos (valores arbitrarios, solo para forma)
+y_vals = np.linspace(0.5, 2.5, 200)  # ingreso per cápita relativo
+y_star = 1.5  # umbral de transición demográfica (valor teórico)
 
-fig_iii, ax_iii = plt.subplots(figsize=(8, 4))
-# Calcular tasas de crecimiento
-gr_sim = np.diff(np.log(P_global)) / np.diff(years_sim) * 100  # (% anual)
-P_for_plot = P_global[:-1]  # Alinear con el número de intervalos
+# Forma funcional: crece hasta y*, luego cae
+n_vals = np.where(
+    y_vals <= y_star,
+    0.02 * (y_vals / y_star),          # rama creciente
+    0.02 * (2 - y_vals / y_star)       # rama decreciente
+)
+n_vals = np.maximum(n_vals, 0)  # evitar negativos
 
-ax_iii.plot(P_for_plot, gr_sim, 'r-', label="Tasa de crecimiento simulada")
-ax_iii.scatter(P_points, n_points, color='blue', s=50, zorder=5, label="Puntos clave del modelo")
+# Graficar
+fig_ii, ax_ii = plt.subplots(figsize=(8, 4))
+ax_ii.plot(y_vals, n_vals, 'k-', linewidth=2, label=r"Curva teórica $n(y)$")
+ax_ii.axvline(x=y_star, color='red', linestyle='--', label=r"$y^*$ (umbral de transición)")
+ax_ii.set_xlabel("Ingreso per cápita (relativo)")
+ax_ii.set_ylabel("Tasa de crecimiento poblacional (% anual)")
+ax_ii.set_title("Figura II: Dinámica de la transición demográfica (Kremer, 1993)")
+ax_ii.legend()
+ax_ii.grid(True, ls="--", lw=0.5)
+st.pyplot(fig_ii)
 
-for i, (P, n) in enumerate(zip(P_points, n_points)):
-    ax_iii.annotate(f'P={P:.3f}\nn={n:.4f}%', 
-                   (P, n), 
-                   textcoords="offset points", 
-                   xytext=(0,10), 
-                   ha='center')
+st.markdown(r"""
+**Fundamento económico (Kremer, 1993, Sección III):**  
+La tasa de crecimiento poblacional, $n$, es una función del ingreso per cápita, $y$:  
+$$
+n = n(y)
+$$
 
-ax_iii.set_xlabel("Población (billones)")
-ax_iii.set_ylabel("Tasa de crecimiento anual (%)")
-ax_iii.set_title("Figura III: Tasa de crecimiento vs. nivel de población")
-ax_iii.legend()
-ax_iii.grid(True, ls="--", lw=0.5)
-st.pyplot(fig_iii)
+- **Para $y < y^*$:** $n'(y) > 0$ → más ingreso permite criar más hijos (visión malthusiana).  
+- **Para $y > y^*$:** $n'(y) < 0$ → más ingreso reduce la fertilidad (transición demográfica).  
 
-st.markdown("""
-**Interpretación económica:**  
-- El modelo predice que **la tasa de crecimiento poblacional es proporcional al nivel de población**:  
-  \[
-  \frac{\dot{P}}{P} = k P
-  \]
-- Por tanto, **cuanto más grande es la población, más rápido crece**.
-- Esto genera un **ciclo de retroalimentación positiva**: más personas → más inventores → más tecnología → más población → ...
-- La línea roja muestra cómo esta relación se cumple en tu simulación.
+Esta dinámica explica por qué el crecimiento poblacional se desacelera después de 1950:  
+**no por escasez de recursos, sino por prosperidad**.
+
+> *"At low levels of income, population growth increases with income; at high levels, it decreases."*  
+> — Kremer (1993, p. 694)
 """)
