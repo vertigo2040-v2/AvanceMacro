@@ -195,8 +195,8 @@ ax1_zoom.set_xlabel("Año (negativo = A.C., positivo = D.C.)")
 ax1_zoom.set_ylabel("Población (billones)")
 ax1_zoom.set_title("Zoom: Evolución de la población (últimos 12,000 años)")
 
-ax1_zoom.set_xticks([-10000, -5000, -1000, 0, 500, 1500, 1900, 2000])
-ax1_zoom.set_xticklabels(["-10K", "-5K", "-1K", "0", "500", "1.5K", "1900", "2000"], rotation=45)
+ax1_zoom.set_xticks([-10000, -5000, -1000, 0, 500, 1000, 1500, 1900, 2000])
+ax1_zoom.set_xticklabels(["-10K", "-5K", "-1K", "0", "500", "1K", "1.5K", "1900", "2000"], rotation=45)
 
 ax1_zoom.legend()
 ax1_zoom.grid(True, which="both", ls="--", lw=0.5)
@@ -208,7 +208,7 @@ if g < 0.005:
 elif g > 0.015:
     st.warning("⚠️ g muy alto: la población explotará antes de 1950.")
 
-# === Gráfico 2: Tasa de crecimiento vs población (CORREGIDO) ===
+# === Gráfico 3: Tasa de crecimiento vs población (CORREGIDO) ===
 log_P = np.log(P_global)
 dlogP = np.diff(log_P)
 dt_years = np.diff(years_sim)
@@ -422,3 +422,19 @@ st.pyplot(fig_recent)
 
 st.caption("💡 La transición demográfica explica por qué el crecimiento poblacional se desacelera tras ~1960, "
           "a pesar de que la tecnología sigue avanzando. Sin ella, el modelo predice aceleración continua.")
+
+st.header("transición demográfica")
+
+st.markdown(r"""
+El modelo básico no explica la desaceleración post-1950. Kremer lo generaliza asumiendo que la tasa de crecimiento poblacional es una función del ingreso per cápita $y$:
+
+$$
+n = n(y), \quad \text{con } 
+\begin{cases}
+n'(y) > 0 & \text{si } y \text{ es bajo} \\
+n'(y) < 0 & \text{si } y \text{ es alto}
+\end{cases}
+$$
+
+Cuando $y$ supera un umbral (por mayor educación, menor mortalidad infantil, etc.), **la fertilidad cae**, rompiendo el ciclo malthusiano. Esto es coherente con la teoría del capital humano (Becker, 1960) y con la evidencia empírica.
+""")
