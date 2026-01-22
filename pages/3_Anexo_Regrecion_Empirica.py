@@ -97,7 +97,7 @@ a pesar de que la población sigue creciendo.
 Esto no invalida el modelo, sino que **confirma su extensión**:  
 cuando el ingreso per cápita supera un umbral, comienza la **transición demográfica** (fertilidad cae), 
 rompiendo el ciclo malthusiano.
-
+""")
 
 st.header("Referencia")
 
