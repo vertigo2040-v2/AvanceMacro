@@ -98,8 +98,6 @@ Esto no invalida el modelo, sino que **confirma su extensión**:
 cuando el ingreso per cápita supera un umbral, comienza la **transición demográfica** (fertilidad cae), 
 rompiendo el ciclo malthusiano.
 
-En tu simulación, esto se modela con el checkbox **“Incluir transición demográfica (post-1950)”**.
-""")
 
 st.header("Referencia")
 
