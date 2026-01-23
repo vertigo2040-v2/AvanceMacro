@@ -155,6 +155,10 @@ if include_dem_trans and not explosion_detected:
                 adjusted_growth = current_growth * reduction_factor
                 P_global[i] = P_global[i-1] * np.exp(adjusted_growth)
 
+with st.expander("ℹ️ Evidencia I"):
+    # imgen de ayuda del crecimiento poblacional
+    st.image("assets/Marcha.jpg", caption="Figura 1. Tasa de crecimiento vs población en años", width=600)
+
 # === Gráfico 1: Visión general (todo el rango) ===
 fig1_general, ax1_general = plt.subplots(figsize=(8, 4))
 ax1_general.plot(df_hist["Year"], df_hist["Pop"], 'o-', label="Datos históricos (Kremer)", color="black", markersize=3)
@@ -209,6 +213,10 @@ if g < 0.005:
 elif g > 0.015:
     st.warning("⚠️ g muy alto: la población explotará antes de 1950.")
 
+with st.expander("📊 Dinámica del ciclo de crecimiento poblacional"):
+    st.image("assets/ciclo.jpg", caption="Figura 2. ciclo del crecimiento poblacional y tecnologia", width=600)
+
+    
 # === Gráfico 3: Tasa de crecimiento vs población (CORREGIDO) ===
 log_P = np.log(P_global)
 dlogP = np.diff(log_P)
@@ -238,6 +246,146 @@ ax2.legend()
 ax2.grid(True, ls="--", lw=0.5)
 st.pyplot(fig2)
 
+with st.expander("📉 La desaceleración del crecimiento poblacional"):
+    st.markdown("""
+    ### 📉 ¿Por qué se desacelera el crecimiento poblacional si la tecnología sigue avanzando?
+
+    Durante casi toda la historia humana, más tecnología → más ingreso → más hijos → más población.  
+    Pero **a partir del siglo XX**, en los países más ricos, esta relación se invierte:
+
+    > **Más ingreso → menos hijos por familia → crecimiento poblacional se desacelera.**
+
+    Esto no es un colapso malthusiano (falta de recursos), sino una **transición demográfica** causada por:
+    - Mayor costo de oportunidad del tiempo de las mujeres (educación, empleo).
+    - Menor mortalidad infantil → no se necesitan tantos hijos para asegurar supervivencia.
+    - Preferencia por invertir en la **calidad** (educación, salud) de pocos hijos, no en la **cantidad**.
+
+    Como dice Kremer (1993, p. 698):
+    > *“The generalized model predicts that population growth rates will eventually decline—not due to overpopulation and environmental collapse, but to increased income and declining fertility.”*
+
+    Esta gráfica compara dos escenarios desde 1900:
+    - **Con transición demográfica**: reproduce la realidad histórica (crecimiento se frena tras ~1960).
+    - **Sin transición**: el modelo simple predice aceleración continua (¡incluso explosión!).
+
+    La diferencia entre ambas líneas muestra **el poder de la prosperidad para cambiar los incentivos reproductivos**.
+    """)
+    st.header("📉 transición demográfica")
+
+    st.markdown(r"""
+    El modelo básico no explica la desaceleración post-1950. Kremer lo generaliza asumiendo que la tasa de crecimiento poblacional es una función del ingreso per cápita $y$:
+
+    $$
+    n = n(y), \quad \text{con } 
+    \begin{cases}
+    n'(y) > 0 & \text{si } y \text{ es bajo} \\
+    n'(y) < 0 & \text{si } y \text{ es alto}
+    \end{cases}
+    $$
+
+    Cuando $y$ supera un umbral (por mayor educación, menor mortalidad infantil, etc.), **la fertilidad cae**, rompiendo el ciclo malthusiano. Esto es coherente con la teoría del capital humano (Becker, 1960) y con la evidencia empírica.
+    """)
+
+
+# === Gráfico 3: Desaceleración reciente (1900–2000) ===
+st.subheader("📉 Desaceleración del crecimiento poblacional (1900–2000)")
+
+years_recent = np.arange(1900, 2001, 1)
+P_with_trans = np.full_like(years_recent, P_global[np.argmin(np.abs(years_sim - 1900))], dtype=float)
+P_without_trans = np.full_like(years_recent, P_global[np.argmin(np.abs(years_sim - 1900))], dtype=float)
+
+P_1900 = P_global[np.argmin(np.abs(years_sim - 1900))]
+P_with_trans[0] = P_1900
+P_without_trans[0] = P_1900
+
+# Simular sin transición
+for i in range(1, len(years_recent)):
+    dPdt = (g / (1 - alpha)) * P_without_trans[i-1]**2
+    P_without_trans[i] = P_without_trans[i-1] + dPdt * 1
+    if P_without_trans[i] > 1000:
+        P_without_trans[i] = 1000
+        break
+
+# Simular con transición
+for i in range(1, len(years_recent)):
+    dPdt = (g / (1 - alpha)) * P_with_trans[i-1]**2
+    P_with_trans[i] = P_with_trans[i-1] + dPdt * 1
+    if P_with_trans[i] > 1000:
+        P_with_trans[i] = 1000
+        break
+    if years_recent[i] >= 1950:
+        years_since_1950 = years_recent[i] - 1950
+        reduction_factor = max(0.2, 1 - 0.015 * years_since_1950)
+        current_growth = np.log(P_with_trans[i] / P_with_trans[i-1])
+        adjusted_growth = current_growth * reduction_factor
+        P_with_trans[i] = P_with_trans[i-1] * np.exp(adjusted_growth)
+
+# Calcular tasas de crecimiento (%/año)
+gr_with = np.diff(np.log(P_with_trans)) * 100
+gr_without = np.diff(np.log(P_without_trans)) * 100
+
+mask_hist = (df_hist["Year"] >= 1900) & (df_hist["Year"] <= 2000)
+df_hist_recent = df_hist[mask_hist].copy()
+gr_hist = np.diff(np.log(df_hist_recent["Pop"])) / np.diff(df_hist_recent["Year"]) * 100
+
+fig_recent, ax_recent = plt.subplots(figsize=(8, 4))
+ax_recent.plot(
+    df_hist_recent["Year"].iloc[:-1], gr_hist,
+    'o-', color="black", label="Datos históricos", markersize=4
+)
+ax_recent.plot(
+    years_recent[:-1], gr_with,
+    '-', color="green", label="Con transición demográfica"
+)
+ax_recent.plot(
+    years_recent[:-1], gr_without,
+    '--', color="red", label="Sin transición demográfica"
+)
+
+ax_recent.set_xlabel("Año")
+ax_recent.set_ylabel("Tasa de crecimiento anual (%)")
+ax_recent.set_title("Desaceleración del crecimiento poblacional (1900–2000)")
+ax_recent.legend()
+ax_recent.grid(True, ls="--", lw=0.5)
+st.pyplot(fig_recent)
+
+st.caption("💡 La transición demográfica explica por qué el crecimiento poblacional se desacelera tras ~1960, "
+          "a pesar de que la tecnología sigue avanzando. Sin ella, el modelo predice aceleración continua.")
+
+with st.expander("ℹ️ Detalles de la simulación de desaceleración"):
+    st.image("assets/Quiebre.jpg", caption="Figura 3. Simulación de la desaceleración del crecimiento poblacional (1900–2000)", width=600)
+# === Gráfico A: Figura II — Tasa de crecimiento vs. ingreso per cápita ===
+st.subheader("📈 Figura II: Tasa de crecimiento poblacional vs. ingreso per cápita")
+
+# Crear curva teórica n(y): forma de campana invertida
+y_vals = np.linspace(0.5, 2.5, 200)
+y_star = 1.5  # Punto máximo (ingreso umbral)
+n_vals = np.where(
+    y_vals <= y_star,
+    0.02 * (y_vals / y_star),          # Rama creciente
+    0.02 * (2 - y_vals / y_star)       # Rama decreciente
+)
+n_vals = np.maximum(n_vals, 0)
+
+fig_ii, ax_ii = plt.subplots(figsize=(8, 4))
+ax_ii.plot(y_vals, n_vals, 'k-', linewidth=2, label=r"Curva teórica $n(y)$")
+ax_ii.axvline(x=y_star, color='red', linestyle='--', label=r"$y^*$ (umbral de transición)")
+ax_ii.set_xlabel("Ingreso per cápita (relativo)")
+ax_ii.set_ylabel("Tasa de crecimiento poblacional (% anual)")
+ax_ii.set_title("Figura II: Dinámica de la transición demográfica")
+ax_ii.legend()
+ax_ii.grid(True, ls="--", lw=0.5)
+st.pyplot(fig_ii)
+
+st.markdown("""
+**Interpretación económica:**  
+- **Rama izquierda**: En sociedades pobres, más ingreso permite criar más hijos → crecimiento ↑.  
+- **Rama derecha**: En sociedades ricas, más ingreso reduce la fertilidad → crecimiento ↓.  
+- **Pico en \( y^* \)**: Representa el punto de inflexión donde comienza la transición demográfica.  
+- Esta dinámica explica por qué el crecimiento poblacional se desacelera después de 1950, **no por escasez, sino por prosperidad**.
+""")
+
+
+
 # === Sección comparativa: Regiones aisladas ===
 st.subheader("🌍 Comparación entre regiones aisladas (sin contacto tecnológico)")
 with st.expander("ℹ️ ¿Qué muestra esta simulación?"):
@@ -258,6 +406,8 @@ with st.expander("ℹ️ ¿Qué muestra esta simulación?"):
     - Viejo Mundo (1500): ~407 millones → civilizaciones avanzadas.  
     - Tasmania (1500): ~1,200–5,000 personas → perdió tecnologías como hacer fuego.
     """)
+with st.expander("ℹ️ Evidencia II"):
+    st.image("assets/regiones.png", caption="Figura 4. Hace 12.000 años, el derretimiento de los hielos creó cuatro laboratorios aislados. Sin contacto hasta 1500 d.C.", width=680)
 
 st.write("Simulamos dos sociedades independientes desde **10,000 A.C. hasta 1500 D.C.**")
 
@@ -336,180 +486,5 @@ st.pyplot(fig4)
 st.caption("💡 En ausencia de contacto, la región con mayor población inicial acumula ventaja tecnológica mucho más rápido. "
           "Esto explica por qué Tasmania perdió tecnologías básicas, mientras el Viejo Mundo desarrolló civilizaciones complejas.")
 
-with st.expander("📉 La desaceleración del crecimiento poblacional"):
-    st.markdown("""
-    ### 📉 ¿Por qué se desacelera el crecimiento poblacional si la tecnología sigue avanzando?
-
-    Durante casi toda la historia humana, más tecnología → más ingreso → más hijos → más población.  
-    Pero **a partir del siglo XX**, en los países más ricos, esta relación se invierte:
-
-    > **Más ingreso → menos hijos por familia → crecimiento poblacional se desacelera.**
-
-    Esto no es un colapso malthusiano (falta de recursos), sino una **transición demográfica** causada por:
-    - Mayor costo de oportunidad del tiempo de las mujeres (educación, empleo).
-    - Menor mortalidad infantil → no se necesitan tantos hijos para asegurar supervivencia.
-    - Preferencia por invertir en la **calidad** (educación, salud) de pocos hijos, no en la **cantidad**.
-
-    Como dice Kremer (1993, p. 698):
-    > *“The generalized model predicts that population growth rates will eventually decline—not due to overpopulation and environmental collapse, but to increased income and declining fertility.”*
-
-    Esta gráfica compara dos escenarios desde 1900:
-    - **Con transición demográfica**: reproduce la realidad histórica (crecimiento se frena tras ~1960).
-    - **Sin transición**: el modelo simple predice aceleración continua (¡incluso explosión!).
-
-    La diferencia entre ambas líneas muestra **el poder de la prosperidad para cambiar los incentivos reproductivos**.
-    """)
-    st.header("📉 transición demográfica")
-
-    st.markdown(r"""
-    El modelo básico no explica la desaceleración post-1950. Kremer lo generaliza asumiendo que la tasa de crecimiento poblacional es una función del ingreso per cápita $y$:
-
-    $$
-    n = n(y), \quad \text{con } 
-    \begin{cases}
-    n'(y) > 0 & \text{si } y \text{ es bajo} \\
-    n'(y) < 0 & \text{si } y \text{ es alto}
-    \end{cases}
-    $$
-
-    Cuando $y$ supera un umbral (por mayor educación, menor mortalidad infantil, etc.), **la fertilidad cae**, rompiendo el ciclo malthusiano. Esto es coherente con la teoría del capital humano (Becker, 1960) y con la evidencia empírica.
-    """)
-
-# === Gráfico 3: Desaceleración reciente (1900–2000) ===
-st.subheader("📉 Desaceleración del crecimiento poblacional (1900–2000)")
-
-years_recent = np.arange(1900, 2001, 1)
-P_with_trans = np.full_like(years_recent, P_global[np.argmin(np.abs(years_sim - 1900))], dtype=float)
-P_without_trans = np.full_like(years_recent, P_global[np.argmin(np.abs(years_sim - 1900))], dtype=float)
-
-P_1900 = P_global[np.argmin(np.abs(years_sim - 1900))]
-P_with_trans[0] = P_1900
-P_without_trans[0] = P_1900
-
-# Simular sin transición
-for i in range(1, len(years_recent)):
-    dPdt = (g / (1 - alpha)) * P_without_trans[i-1]**2
-    P_without_trans[i] = P_without_trans[i-1] + dPdt * 1
-    if P_without_trans[i] > 1000:
-        P_without_trans[i] = 1000
-        break
-
-# Simular con transición
-for i in range(1, len(years_recent)):
-    dPdt = (g / (1 - alpha)) * P_with_trans[i-1]**2
-    P_with_trans[i] = P_with_trans[i-1] + dPdt * 1
-    if P_with_trans[i] > 1000:
-        P_with_trans[i] = 1000
-        break
-    if years_recent[i] >= 1950:
-        years_since_1950 = years_recent[i] - 1950
-        reduction_factor = max(0.2, 1 - 0.015 * years_since_1950)
-        current_growth = np.log(P_with_trans[i] / P_with_trans[i-1])
-        adjusted_growth = current_growth * reduction_factor
-        P_with_trans[i] = P_with_trans[i-1] * np.exp(adjusted_growth)
-
-# Calcular tasas de crecimiento (%/año)
-gr_with = np.diff(np.log(P_with_trans)) * 100
-gr_without = np.diff(np.log(P_without_trans)) * 100
-
-mask_hist = (df_hist["Year"] >= 1900) & (df_hist["Year"] <= 2000)
-df_hist_recent = df_hist[mask_hist].copy()
-gr_hist = np.diff(np.log(df_hist_recent["Pop"])) / np.diff(df_hist_recent["Year"]) * 100
-
-fig_recent, ax_recent = plt.subplots(figsize=(8, 4))
-ax_recent.plot(
-    df_hist_recent["Year"].iloc[:-1], gr_hist,
-    'o-', color="black", label="Datos históricos", markersize=4
-)
-ax_recent.plot(
-    years_recent[:-1], gr_with,
-    '-', color="green", label="Con transición demográfica"
-)
-ax_recent.plot(
-    years_recent[:-1], gr_without,
-    '--', color="red", label="Sin transición demográfica"
-)
-
-ax_recent.set_xlabel("Año")
-ax_recent.set_ylabel("Tasa de crecimiento anual (%)")
-ax_recent.set_title("Desaceleración del crecimiento poblacional (1900–2000)")
-ax_recent.legend()
-ax_recent.grid(True, ls="--", lw=0.5)
-st.pyplot(fig_recent)
-
-st.caption("💡 La transición demográfica explica por qué el crecimiento poblacional se desacelera tras ~1960, "
-          "a pesar de que la tecnología sigue avanzando. Sin ella, el modelo predice aceleración continua.")
-
-# === Gráfico A: Figura II — Tasa de crecimiento vs. ingreso per cápita ===
-st.subheader("📈 Figura II: Tasa de crecimiento poblacional vs. ingreso per cápita")
-
-# Crear curva teórica n(y): forma de campana invertida
-y_vals = np.linspace(0.5, 2.5, 200)
-y_star = 1.5  # Punto máximo (ingreso umbral)
-n_vals = np.where(
-    y_vals <= y_star,
-    0.02 * (y_vals / y_star),          # Rama creciente
-    0.02 * (2 - y_vals / y_star)       # Rama decreciente
-)
-n_vals = np.maximum(n_vals, 0)
-
-fig_ii, ax_ii = plt.subplots(figsize=(8, 4))
-ax_ii.plot(y_vals, n_vals, 'k-', linewidth=2, label=r"Curva teórica $n(y)$")
-ax_ii.axvline(x=y_star, color='red', linestyle='--', label=r"$y^*$ (umbral de transición)")
-ax_ii.set_xlabel("Ingreso per cápita (relativo)")
-ax_ii.set_ylabel("Tasa de crecimiento poblacional (% anual)")
-ax_ii.set_title("Figura II: Dinámica de la transición demográfica")
-ax_ii.legend()
-ax_ii.grid(True, ls="--", lw=0.5)
-st.pyplot(fig_ii)
-
-st.markdown("""
-**Interpretación económica:**  
-- **Rama izquierda**: En sociedades pobres, más ingreso permite criar más hijos → crecimiento ↑.  
-- **Rama derecha**: En sociedades ricas, más ingreso reduce la fertilidad → crecimiento ↓.  
-- **Pico en \( y^* \)**: Representa el punto de inflexión donde comienza la transición demográfica.  
-- Esta dinámica explica por qué el crecimiento poblacional se desacelera después de 1950, **no por escasez, sino por prosperidad**.
-""")
-
-# === Figura II: Relación teórica n(y) — Independiente de la simulación ===
-st.subheader("📈 Figura II: Tasa de crecimiento poblacional vs. ingreso per cápita (Kremer, 1993)")
-
-# Crear ejes teóricos (valores arbitrarios, solo para forma)
-y_vals = np.linspace(0.5, 2.5, 200)  # ingreso per cápita relativo
-y_star = 1.5  # umbral de transición demográfica (valor teórico)
-
-# Forma funcional: crece hasta y*, luego cae
-n_vals = np.where(
-    y_vals <= y_star,
-    0.02 * (y_vals / y_star),          # rama creciente
-    0.02 * (2 - y_vals / y_star)       # rama decreciente
-)
-n_vals = np.maximum(n_vals, 0)  # evitar negativos
-
-# Graficar
-fig_ii, ax_ii = plt.subplots(figsize=(8, 4))
-ax_ii.plot(y_vals, n_vals, 'k-', linewidth=2, label=r"Curva teórica $n(y)$")
-ax_ii.axvline(x=y_star, color='red', linestyle='--', label=r"$y^*$ (umbral de transición)")
-ax_ii.set_xlabel("Ingreso per cápita (relativo)")
-ax_ii.set_ylabel("Tasa de crecimiento poblacional (% anual)")
-ax_ii.set_title("Figura II: Dinámica de la transición demográfica (Kremer, 1993)")
-ax_ii.legend()
-ax_ii.grid(True, ls="--", lw=0.5)
-st.pyplot(fig_ii)
-
-st.markdown(r"""
-**Fundamento económico (Kremer, 1993, Sección III):**  
-La tasa de crecimiento poblacional, $n$, es una función del ingreso per cápita, $y$:  
-$$
-n = n(y)
-$$
-
-- **Para $y < y^*$:** $n'(y) > 0$ → más ingreso permite criar más hijos (visión malthusiana).  
-- **Para $y > y^*$:** $n'(y) < 0$ → más ingreso reduce la fertilidad (transición demográfica).  
-
-Esta dinámica explica por qué el crecimiento poblacional se desacelera después de 1950:  
-**no por escasez de recursos, sino por prosperidad**.
-
-> *"At low levels of income, population growth increases with income; at high levels, it decreases."*  
-> — Kremer (1993, p. 694)
-""")
+with st.expander("ℹ️ grafica entre poblaciones y tecnologia"):
+    st.image("assets/ragiones.jpg", caption="Figura 5. Tecnologia y cantidad de poblaciones por regiones", width=600)
