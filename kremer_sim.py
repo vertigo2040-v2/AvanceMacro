@@ -49,7 +49,7 @@ with st.expander("ℹ️ Contexto teórico del modelo"):
     - La tasa de crecimiento poblacional ha sido aproximadamente **proporcional al nivel de población** (ver Figura I del paper).
     - Entre sociedades aisladas (ej. Tasmania vs. Viejo Mundo), **las más pobladas desarrollaron más tecnología**.
 
-    Esta simulación te permite explorar esos mecanismos en tiempo real.
+    Esta simulación permite explorar esos mecanismos en tiempo real.
     """)
 
 # === Instrucciones interactivas ===
@@ -261,7 +261,7 @@ with st.expander("📉 La desaceleración del crecimiento poblacional"):
     - Preferencia por invertir en la **calidad** (educación, salud) de pocos hijos, no en la **cantidad**.
 
     Como dice Kremer (1993, p. 698):
-    > *“The generalized model predicts that population growth rates will eventually decline—not due to overpopulation and environmental collapse, but to increased income and declining fertility.”*
+    > *“El modelo generalizado predice que las tasas de crecimiento poblacional eventualmente disminuirán, no debido a la superpoblación y al colapso ambiental, sino al aumento de los ingresos y la disminución de la fertilidad. ”*
 
     Esta gráfica compara dos escenarios desde 1900:
     - **Con transición demográfica**: reproduce la realidad histórica (crecimiento se frena tras ~1960).
